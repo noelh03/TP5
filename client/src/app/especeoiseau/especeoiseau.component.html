@@ -12,7 +12,7 @@
       <th class="actionCell">Action</th>
     </thead>
     <tbody>
-      <tr *ngFor="let espece of especesOiseaux; let i = index">
+      <!-- <tr *ngFor="let espece of especesOiseaux; let i = index">
         <td class="contentCell">{{ espece.nomscientifique }}</td>
         <td class="contentCell" contenteditable="true" (blur)="changeNomCommun($event, i)">{{ espece.nomcommun }}</td>
         <td class="contentCell" contenteditable="true" (blur)="changeStatut($event, i)">{{ espece.statutspeces }}</td>
@@ -28,8 +28,21 @@
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Commun" #newNomCommun></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Statut" #newStatut></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Scientifique Comsommer" #newNomScientifiqueComsommer></td>
-        <td class="contentCell"></td>
-      </tr>
+      
+        
+      </tr> -->
+
+      
+
+      <div>
+        <h2>Liste des noms scientifiques comsommer</h2>
+        <ul>
+          <tr *ngFor="let nom of listeNomsScientifiquesComsommer; let i = index">
+            <td class="contentCell">{{ nom.nomscientifique }}</td>
+          </tr> 
+        </ul>
+      </div>
+      
 
     </tbody>
   </table>

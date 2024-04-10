@@ -13,6 +13,7 @@ export class EspeceOiseauComponent {
   @ViewChild("newStatut") newStatut: ElementRef;
   @ViewChild("newNomScientifiqueComsommer") newNomScientifiqueComsommer: ElementRef;
 
+
   public listeNomsScientifiquesComsommer: string[] = [];
   public especesOiseaux: Especeoiseau[] = [];
   public duplicateError: boolean = false;
@@ -21,16 +22,23 @@ export class EspeceOiseauComponent {
 
   public ngOnInit(): void {
     this.getEspecesOiseaux();
+    this.getNomScientifiqueConsommer();
   }
 
   public getEspecesOiseaux(): void {
     this.communicationService.getEspecesOiseaux().subscribe((especesOiseaux: Especeoiseau[]) => {
       this.especesOiseaux = especesOiseaux;
     });
-    this.communicationService.getDistinctNomScientifique().subscribe((noms: string[]) => {
+    
+  }
+
+  public getNomScientifiqueConsommer(): void {
+    this.communicationService.getNomScientifiqueConsommer().subscribe((noms: string[]) => {
       this.listeNomsScientifiquesComsommer = noms;
     });
+  
   }
+
 
   public insertEspeceOiseau(): void {
     const especeOiseau: Especeoiseau = {
