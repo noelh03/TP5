@@ -9,13 +9,14 @@ import { Gender, Guest } from "../../../common/tables/Guest";
 export class DatabaseService {
   // TODO: A MODIFIER POUR VOTRE BD
   public connectionConfig: pg.ConnectionConfig = {
-    user: "hotel",
-    database: "TP5",
+    user: "ornithologue_db",
+    database: "bd_tp1",
     password: "1234",
     port: 5432,
     host: "127.0.0.1",
     keepAlive: true,
   };
+
 
   public pool: pg.Pool = new pg.Pool(this.connectionConfig);
 
