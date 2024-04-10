@@ -12,39 +12,35 @@
       <th class="actionCell">Action</th>
     </thead>
     <tbody>
-      <!-- <tr *ngFor="let espece of especesOiseaux; let i = index">
+      <tr *ngFor="let espece of especesOiseaux; let i = index">
         <td class="contentCell">{{ espece.nomscientifique }}</td>
         <td class="contentCell" contenteditable="true" (blur)="changeNomCommun($event, i)">{{ espece.nomcommun }}</td>
         <td class="contentCell" contenteditable="true" (blur)="changeStatut($event, i)">{{ espece.statutspeces }}</td>
-        <td class="contentCell" contenteditable="true" (blur)="changeNomScientifiqueComsommer($event, i)">{{ espece.nomscientifiquecomsommer }}</td>
+        <td class="contentCell">
+          <select [(ngModel)]="espece.nomscientifiquecomsommer">
+            <option *ngFor="let nom of listeNomsScientifiquesComsommer" [value]="nom">{{ nom }}</option>
+          </select>
+        </td>
         <td class="actionCell">
           <button type="button" class="submitbtn" (click)="updateEspeceOiseau(i)"><i class="fa fa-edit"></i></button>
           <button type="button" class="deletebtn" (click)="deleteEspeceOiseau(espece.nomscientifique)"><i class="fa fa-trash-o"></i></button>
         </td>
       </tr>
-
+    
       <tr class="blank_row">
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Scientifique" #newNomScientifique></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Commun" #newNomCommun></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Statut" #newStatut></td>
-        <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Scientifique Comsommer" #newNomScientifiqueComsommer></td>
-      
-        
-      </tr> -->
-
-      
-
-      <div>
-        <h2>Liste des noms scientifiques comsommer</h2>
-        <ul>
-          <tr *ngFor="let nom of listeNomsScientifiquesComsommer; let i = index">
-            <td class="contentCell">{{ nom.nomscientifique }}</td>
-          </tr> 
-        </ul>
-      </div>
-      
-
+        <td class="contentCell">
+          <!-- <select>
+            <option *ngFor="let nom of listeNomsScientifiquesComsommer" [value]="nom.nomscientifique ">{{ nom.nomscientifique  }}</option>
+          </select> -->
+        </td>
+        <td class="contentCell"></td>
+      </tr>
     </tbody>
+    
+
   </table>
 
   <button type="button" class="btn" (click)="insertEspeceOiseau()">+</button>
