@@ -18,6 +18,20 @@ export class DatabaseController {
 
     // ======= Especeoiseau ROUTES =======
     // ex http://localhost:3000/database/hotel?hotelNb=3&name=LeGrandHotel&city=laval
+  // ======= BIRDS ROUTES =======
+  router.get("/birds", (req: Request, res: Response, _: NextFunction) => {
+    this.databaseService.getAllBirds()
+      .then((result: pg.QueryResult) => {
+        res.json(result.rows); // Renvoie les espèces d'oiseaux récupérées sous forme de JSON
+      })
+      .catch((e: Error) => {
+        console.error(e.stack);
+        res.status(500).send("Une erreur s'est produite lors de la récupération des espèces d'oiseaux.");
+      });
+  });
+
+
+
     router.post(
       "/birds/insert",
       (req: Request, res: Response, _: NextFunction) => {
