@@ -1,9 +1,9 @@
 import { injectable } from "inversify";
 import * as pg from "pg";
 import "reflect-metadata";
-import { Room } from "../../../common/tables/Room";
-import { Hotel } from "../../../common/tables/Hotel";
-import { Gender, Guest } from "../../../common/tables/Guest";
+import { Room } from "../../../common/tables/Observateur";
+import { Hotel } from "../../../common/tables/Communaute";
+import { Gender, Guest } from "../../../common/tables/Especeoiseau";
 
 @injectable()
 export class DatabaseService {

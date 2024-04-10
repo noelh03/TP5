@@ -2,10 +2,10 @@ import { NextFunction, Request, Response, Router } from "express";
 import { inject, injectable } from "inversify";
 import * as pg from "pg";
 
-import { Hotel } from "../../../common/tables/Hotel";
+import { Hotel } from "../../../common/tables/Communaute";
 import { HotelPK } from "../../../common/tables/HotelPK";
-import { Room } from "../../../common/tables/Room";
-import { Guest } from "../../../common/tables/Guest";
+import { Room } from "../../../common/tables/Observateur";
+import { Guest } from "../../../common/tables/Especeoiseau";
 
 import { DatabaseService } from "../services/database.service";
 import Types from "../types";
