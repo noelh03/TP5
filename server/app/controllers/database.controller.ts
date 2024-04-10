@@ -30,6 +30,16 @@ export class DatabaseController {
       });
   });
 
+  router.get("/birds/distinct-nomscientifique", (req: Request, res: Response, _: NextFunction) => {
+    this.databaseService.getDistinctNomScientifiqueComsommer()
+      .then((result: pg.QueryResult) => {
+        res.json(result.rows); // Renvoie les noms scientifiques comsommer distincts sous forme de JSON
+      })
+      .catch((e: Error) => {
+        console.error(e.stack);
+        res.status(500).send("Une erreur s'est produite lors de la récupération des noms scientifiques comsommer distincts.");
+      });
+  });
 
 
     router.post(
