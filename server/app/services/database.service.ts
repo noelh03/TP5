@@ -9,9 +9,9 @@ import { Gender, Guest } from "../../../common/tables/Guest";
 export class DatabaseService {
   // TODO: A MODIFIER POUR VOTRE BD
   public connectionConfig: pg.ConnectionConfig = {
-    user: "postgres",
-    database: "postgres",
-    password: "mysecretpassword",
+    user: "hotel",
+    database: "TP5",
+    password: "1234",
     port: 5432,
     host: "127.0.0.1",
     keepAlive: true,
