@@ -17,7 +17,6 @@ export class DatabaseService {
     keepAlive: true,
   };
 
-
   public pool: pg.Pool = new pg.Pool(this.connectionConfig);
 
   // ======= DEBUG =======
