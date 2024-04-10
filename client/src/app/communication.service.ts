@@ -26,6 +26,12 @@ export class CommunicationService {
       .pipe(catchError(this.handleError<Especeoiseau[]>("getEspecesOiseaux")));
   }
 
+  public getNomScientifiqueConsommer(): Observable<string[]> {
+    return this.http
+      .get<string[]>(this.BASE_URL + "/birds/distinct-nomscientifique")
+      .pipe(catchError(this.handleError<string[]>("getNomScientifiqueConsommer")));
+  }
+
   public insertEspeceOiseau(espece: Especeoiseau): Observable<number> {
     return this.http
       .post<number>(this.BASE_URL + "/birds/insert", espece)
@@ -44,11 +50,7 @@ export class CommunicationService {
       .pipe(catchError(this.handleError<number>("deleteEspeceOiseau")));
   }
 
-  public getDistinctNomScientifique(): Observable<string[]> {
-    return this.http
-      .get<string[]>(this.BASE_URL + "/birds/distinct-nomscientifique")
-      .pipe(catchError(this.handleError<string[]>("getDistinctNomScientifique")));
-  }
+
   
 
   private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

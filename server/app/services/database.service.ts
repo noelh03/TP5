@@ -27,6 +27,15 @@ export class DatabaseService {
   return res;
 }
 
+public async getDistinctNomScientifiqueComsommer(): Promise<pg.QueryResult> {
+  const client = await this.pool.connect();
+
+  const queryText: string = " SELECT DISTINCT nomscientifique FROM ornithologue_bd.Especeoiseau;";
+  const res = await client.query(queryText);
+  client.release();
+  return res;
+}
+
 
 public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
     const client = await this.pool.connect();
