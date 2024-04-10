@@ -18,13 +18,17 @@ export class DatabaseService {
   public pool: pg.Pool = new pg.Pool(this.connectionConfig);
 
   // ======= DEBUG =======
-  public async getAllFromTable(tableName: string): Promise<pg.QueryResult> {
-    const client = await this.pool.connect();
-    const res = await client.query(`SELECT * FROM HOTELDB.${tableName};`);
-    client.release();
-    return res;
-  }
-  public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
+ // Récupérer toutes les espèces d'oiseaux depuis la base de données
+ public async getAllBirds(): Promise<pg.QueryResult> {
+  const client = await this.pool.connect();
+
+  const res = await client.query("SELECT * FROM ornithologue_bd.Especeoiseau;");
+  client.release();
+  return res;
+}
+
+
+public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
     const client = await this.pool.connect();
 
     if (!bird.nomscientifique || !bird.nomcommun || !bird.statutspeces)
@@ -81,12 +85,5 @@ export class DatabaseService {
     return res;
   }
 
-  // Récupérer toutes les espèces d'oiseaux depuis la base de données
-  public async getAllBirds(): Promise<pg.QueryResult> {
-    const client = await this.pool.connect();
-
-    const res = await client.query("SELECT * FROM ornithologue_bd.Especeoiseau;");
-    client.release();
-    return res;
-  }
+ 
 }
