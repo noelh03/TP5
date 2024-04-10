@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from "@angular/core";
 import { Especeoiseau } from "../../../../common/tables/Especeoiseau";
 import { CommunicationService } from "../communication.service";
 
+
 @Component({
   selector: "app-especeoiseau",
   templateUrl: "./especeoiseau.component.html",
@@ -13,6 +14,8 @@ export class EspeceOiseauComponent {
   @ViewChild("newStatut") newStatut: ElementRef;
   @ViewChild("newNomScientifiqueComsommer") newNomScientifiqueComsommer: ElementRef;
 
+
+  selectedNomComsommer: string = '';
 
   public listeNomsScientifiquesComsommer: string[] = [];
   public especesOiseaux: Especeoiseau[] = [];
@@ -35,19 +38,23 @@ export class EspeceOiseauComponent {
   public getNomScientifiqueConsommer(): void {
     this.communicationService.getNomScientifiqueConsommer().subscribe((noms: string[]) => {
       this.listeNomsScientifiquesComsommer = noms;
+      this.listeNomsScientifiquesComsommer.unshift("NULL"); 
     });
-  
   }
-
+  
+  updateNewNomScientifiqueComsommer(selectedValue: string): void {
+    this.newNomScientifiqueComsommer.nativeElement.innerText = selectedValue;
+  }
+  
 
   public insertEspeceOiseau(): void {
     const especeOiseau: Especeoiseau = {
       nomscientifique: this.newNomScientifique.nativeElement.innerText,
       nomcommun: this.newNomCommun.nativeElement.innerText,
       statutspeces: this.newStatut.nativeElement.innerText,
-      nomscientifiquecomsommer: this.newNomScientifiqueComsommer.nativeElement.innerText,
+      nomscientifiquecomsommer: this.newNomScientifiqueComsommer.nativeElement.innerText || 'NULL',
     };
-
+  
     this.communicationService.insertEspeceOiseau(especeOiseau).subscribe((res: number) => {
       if (res > 0) {
         this.communicationService.filter("update");
@@ -56,6 +63,7 @@ export class EspeceOiseauComponent {
       this.duplicateError = res === -1;
     });
   }
+  
 
   private refresh() {
     this.getEspecesOiseaux();

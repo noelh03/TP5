@@ -8,6 +8,15 @@ import { AppComponent } from "./app.component";
 import { CommunicationService } from "./communication.service";
 import { EspeceOiseauComponent } from "./especeoiseau/especeoiseau.component";
 
+const modules = [
+
+  CommonModule,
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    AppRoutingModule
+
+]
 
 @NgModule({
   declarations: [
@@ -15,12 +24,9 @@ import { EspeceOiseauComponent } from "./especeoiseau/especeoiseau.component";
     EspeceOiseauComponent,
   ],
   imports: [
-    CommonModule,
-    BrowserModule,
-    HttpClientModule,
-    FormsModule,
-    AppRoutingModule
+  ...modules
   ],
+  exports: [...modules],
   providers: [CommunicationService],
   bootstrap: [AppComponent],
 })

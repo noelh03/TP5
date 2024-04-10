@@ -29,10 +29,11 @@
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Commun" #newNomCommun></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Statut" #newStatut></td>
         <td class="contentCell" contenteditable="true" placeholder="Nouveau Nom Scientifique Comsommer" #newNomScientifiqueComsommer>
-          <select>
-            <option *ngFor="let nom of listeNomsScientifiquesComsommer" [value]="nom.nomscientifique ">{{ nom.nomscientifique  }}</option>
+          <select (change)="updateNewNomScientifiqueComsommer($event.target.value)">
+            <option *ngFor="let nom of listeNomsScientifiquesComsommer" [value]="nom.nomscientifique">{{ nom === 'NULL' ? 'NULL' : nom.nomscientifique }}</option>   
           </select>
         </td>
+        
         <!-- <td class="contentCell"></td> -->
       </tr>
 
