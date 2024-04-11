@@ -3,6 +3,8 @@ import * as pg from "pg";
 import "reflect-metadata";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
+import {UpdateKey} from "../../../common/tables/UpdateKey";
+
 
 @injectable()
 export class DatabaseService {
@@ -59,7 +61,7 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
   }
 
 
-  public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Promise<pg.QueryResult> {
+  public async updateKey(request: UpdateKey): Promise<pg.QueryResult> {
     const client = await this.pool.connect();
 
     if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
@@ -92,6 +94,53 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
         return res; // Renvoie un objet avec le nombre de lignes mises à jour
 
 }
+
+
+public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Promise<pg.QueryResult> {
+  const client = await this.pool.connect();
+
+  if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
+    throw new Error("Invalid bird creation values");
+
+  // Mettez à jour la clé primaire
+  const updateKeyQueryText: string = `
+    UPDATE ornithologue_bd.Especeoiseau
+    SET nomscientifique = $1
+    WHERE nomscientifique = $2;
+  `;
+  const updateKeyValues: any[] = [request.newKey, request.oldKey];
+  await client.query(updateKeyQueryText, updateKeyValues);
+
+  // Mettez à jour les autres champs
+  const updateOtherFieldsQueryText: string = `
+    UPDATE ornithologue_bd.Especeoiseau
+    SET nomcommun = $1,
+        statutspeces = $2
+        
+    WHERE nomscientifique = $3;
+  `;
+  //nomscientifiquecomsommer = $3
+  const updateOtherFieldsValues: any[] = [
+    request.especeToUpdate.nomcommun,
+    request.especeToUpdate.statutspeces,
+    //request.especeToUpdate.nomscientifiquecomsommer,
+    request.newKey
+  ];
+  await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
+
+    const updatePredatorQueryText: string = `
+      UPDATE ornithologue_bd.Especeoiseau
+      SET nomscientifiquecomsommer = $1
+      WHERE nomscientifiquecomsommer = $2;
+    `;
+    const updatePredatorValues: any[] = [request.especeToUpdate.nomscientifiquecomsommer, request.oldpredator];
+    const res = await client.query(updatePredatorQueryText, updatePredatorValues);
+  
+
+  return res; // Renvoie un objet avec le nombre de lignes mises à jour
+}
+
+
 
   
 

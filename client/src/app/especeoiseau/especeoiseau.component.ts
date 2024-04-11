@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Especeoiseau, Statut  } from "../../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../../common/tables/Keyobject";
 import { CommunicationService } from "../communication.service";
-
+import {UpdateKey} from "../../../../common/tables/UpdateKey";
 
 @Component({
   selector: "app-especeoiseau",
@@ -26,6 +26,8 @@ export class EspeceOiseauComponent {
   public editable: boolean = false;
   public keymodified: boolean= false;
   public oldkey: string = '';
+  public predatormodified: boolean = false;
+  public oldpredator: string = '';
 
 
 
@@ -120,17 +122,19 @@ export class EspeceOiseauComponent {
   }
 
   public changeNomScientifiqueComsommer(event: any, i: number) {
+    this.predatormodified = true;
+    this.oldpredator = this.especesOiseaux[i].nomscientifiquecomsommer;
     const editField = event.target.textContent;
     this.especesOiseaux[i].nomscientifiquecomsommer = editField;
   }
   
 
   public updateEspeceOiseau(i: number) {
-    if (this.keymodified) {
-      // Appel à une méthode spéciale pour mettre à jour la clé primaire
+    if (this.keymodified && this.predatormodified) {
       this.updateKeyAndOtherFields(i);
-    } else {
-      // Appel à la méthode normale pour mettre à jour les autres champs
+    } else if(this.keymodified)
+      this.updateKey(i);
+    else {
       this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
         this.toggleEdit(i);
         this.refresh();
@@ -142,14 +146,35 @@ export class EspeceOiseauComponent {
     const request : UpdateKeyAndOtherFieldsRequest = {
       oldKey: this.oldkey,
       newKey: this.especesOiseaux[i].nomscientifique,
-     especeToUpdate: this.especesOiseaux[i]
+      especeToUpdate: this.especesOiseaux[i],
+      oldpredator: this.oldpredator,
+      newpredator:this.especesOiseaux[i].nomscientifiquecomsommer,
     };
 
     this.communicationService.updateKeyAndOtherFields( request).subscribe((res: any) => {
       this.keymodified = false;
       this.oldkey = '';
+      this.predatormodified = false;
+      this.oldpredator = '';
   
 
+      this.toggleEdit(i);
+      this.refresh();
+    });
+  }
+
+  private updateKey(i: number) {
+    const request : UpdateKey = {
+      oldKey: this.oldkey,
+      newKey: this.especesOiseaux[i].nomscientifique,
+      especeToUpdate: this.especesOiseaux[i],
+
+    };
+
+    this.communicationService.updateKey( request).subscribe((res: any) => {
+      this.keymodified = false;
+      this.oldkey = '';
+    
       this.toggleEdit(i);
       this.refresh();
     });
