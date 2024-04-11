@@ -3,6 +3,7 @@ import { Especeoiseau, Statut  } from "../../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../../common/tables/Keyobject";
 import { CommunicationService } from "../communication.service";
 import {UpdateKey} from "../../../../common/tables/UpdateKey";
+import {UpdatePredator} from "../../../../common/tables/UpdatePredator";
 
 @Component({
   selector: "app-especeoiseau",
@@ -19,6 +20,7 @@ export class EspeceOiseauComponent {
   
   public listeStatuts: Statut[] = Object.values(Statut);
   public selectedStatut: Statut = Statut.Vulnerable;
+  public selectedpredator: string = '';
   public nomScientifique: string = '';
   public nomCommun: string = '';
   public statut: Statut = Statut.Vulnerable; 
@@ -65,7 +67,7 @@ export class EspeceOiseauComponent {
   toggleEdit(index: number) {
     this.especesOiseaux.forEach((espece, i) => {
       espece.editable = i === index;
-      this.editable = espece.editable
+      this.editable = espece.editable;
     });
   }
   
@@ -121,16 +123,15 @@ export class EspeceOiseauComponent {
     this.especesOiseaux[i].nomscientifique = editField;
   }
 
-  public changeNomScientifiqueComsommer(event: any, i: number) {
+  public changeNomScientifiqueComsommer(event: any, i: number, selectedpredator: string) {
     this.predatormodified = true;
     this.oldpredator = this.especesOiseaux[i].nomscientifiquecomsommer;
-    const editField = event.target.textContent;
-    this.especesOiseaux[i].nomscientifiquecomsommer = editField;
+    this.especesOiseaux[i].nomscientifiquecomsommer = selectedpredator;
   }
   
 
   public updateEspeceOiseau(i: number) {
-    this.especesOiseaux[i].editable = false;
+    //this.especesOiseaux[i].editable = false;
     if (this.keymodified && this.predatormodified) {
       this.updateKeyAndOtherFields(i);
       return;
@@ -139,7 +140,10 @@ export class EspeceOiseauComponent {
       this.updateKey(i);
       return;
     }
-
+    else if(this.predatormodified){
+      this.updatePredator(i);
+      return;
+    }
     else {
       this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
         this.toggleEdit(i);
@@ -180,6 +184,22 @@ export class EspeceOiseauComponent {
     this.communicationService.updateKey( request).subscribe((res: any) => {
       this.keymodified = false;
       this.oldkey = '';
+    
+      this.toggleEdit(i);
+      this.refresh();
+    });
+  }
+
+  private updatePredator(i: number) {
+    const request : UpdatePredator = {
+      oldpredator: this.oldpredator,
+      newpredator:this.especesOiseaux[i].nomscientifiquecomsommer,
+      especeToUpdate: this.especesOiseaux[i],
+    };
+
+    this.communicationService.updatePredator(request).subscribe((res: any) => {
+      this.predatormodified = false;
+      this.oldpredator = '';
     
       this.toggleEdit(i);
       this.refresh();

@@ -21,9 +21,12 @@
                     <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut }}</option>
                 </select>
             </td>
+            <td class="contentCell" *ngIf="espece.editable" >
+              <select [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
+                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [ngValue]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
+            </select>
             
-              <td class="contentCell" *ngIf="espece.editable" contenteditable="true" (blur)="changeNomScientifiqueComsommer($event, i)">{{ espece.nomscientifiquecomsommer }}</td>
-
+           </td>
 
               <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomscientifique }}</td>
               <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomcommun }}</td>

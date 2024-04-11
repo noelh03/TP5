@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 import {UpdateKey} from "../../../common/tables/UpdateKey";
+import {UpdatePredator} from "../../../common/tables/UpdatePredator";
 
 
 @injectable()
@@ -66,8 +67,6 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
 
     if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
       throw new Error("Invalid bird creation values");
-
-        // Mettez à jour la clé primaire
         const updateKeyQueryText: string = `
             UPDATE ornithologue_bd.Especeoiseau
             SET nomscientifique = $1
@@ -76,7 +75,7 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
         const updateKeyValues: any[] = [request.newKey, request.oldKey];
         await client.query(updateKeyQueryText, updateKeyValues);
 
-        // Mettez à jour les autres champs
+
         const updateOtherFieldsQueryText: string = `
             UPDATE ornithologue_bd.Especeoiseau
             SET nomcommun = $1,
@@ -91,7 +90,7 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
           request.newKey
         ];
         const res = await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
-        return res; // Renvoie un objet avec le nombre de lignes mises à jour
+        return res; 
 
 }
 
@@ -99,8 +98,10 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
 public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Promise<pg.QueryResult> {
   const client = await this.pool.connect();
 
-  if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
-    throw new Error("Invalid bird creation values");
+  // Vérifiez si le nouveau nom du prédateur est différent de la nouvelle clé du nom d'espèce
+  if (request.newpredator === request.newKey) {
+    throw new Error("Le nouveau prédateur ne peut pas être le même que la nouvelle clé du nom d'espèce (pas de cannibalisme).");
+  }
 
   // Mettez à jour la clé principale
   const updateKeyQueryText: string = `
@@ -115,37 +116,58 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
   const updateOtherFieldsQueryText: string = `
     UPDATE ornithologue_bd.Especeoiseau
     SET nomcommun = $1,
-        statutspeces = $2
-    WHERE nomscientifique = $3;
+        statutspeces = $2,
+        nomscientifiquecomsommer = $3
+    WHERE nomscientifique = $4;
   `;
   const updateOtherFieldsValues: any[] = [
     request.especeToUpdate.nomcommun,
     request.especeToUpdate.statutspeces,
+    request.especeToUpdate.nomscientifiquecomsommer,
     request.newKey
   ];
   const res = await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
 
+  // Mettre à jour le prédateur
+  const updatePredatorQueryText: string = `
+    UPDATE ornithologue_bd.Especeoiseau
+    SET nomscientifiquecomsommer = $1
+    WHERE nomscientifiquecomsommer = $2;
+  `;
+  const updatePredatorValues: any[] = [request.newpredator, request.oldpredator];
+  await client.query(updatePredatorQueryText, updatePredatorValues);
 
-  // Vérifiez si le nouveau nom du prédateur est différent de la nouvelle clé du nom d'espèce
-  if (request.newpredator !== request.newKey) {
-   
-   
-    const updatePredatorQueryText: string = `
-      UPDATE ornithologue_bd.Especeoiseau
-      SET nomscientifiquecomsommer = $1
-      WHERE nomscientifique = $2;
-    `;
-    const updatePredatorValues: any[] = [request.newpredator, request.newKey];
-    return await client.query(updatePredatorQueryText, updatePredatorValues);
-  }else {
-    return  res;
-  }
-
-
+  return res; // Renvoie un objet avec le nombre de lignes mises à jour
 }
 
 
+public async updatePredator(request: UpdatePredator): Promise<pg.QueryResult> {
+  const client = await this.pool.connect();
 
+  if (request.newpredator === request.especeToUpdate.nomscientifique) {
+    throw new Error("Le nouveau prédateur ne peut pas être le même que la nouvelle clé du nom d'espèce (pas de cannibalisme).");
+  }
+
+  if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
+    throw new Error("Invalid bird creation values");
+
+    const updatepredatorandotherfieldstext: string = `
+    UPDATE ornithologue_bd.Especeoiseau
+    SET nomcommun = $1,
+        statutspeces = $2,
+        nomscientifiquecomsommer = $3
+    WHERE nomscientifique = $4;
+  `;
+  const updatepredatorandotherfieldstextvalues: any[] = [
+  request.especeToUpdate.nomcommun,
+  request.especeToUpdate.statutspeces,
+  request.newpredator,
+  request.especeToUpdate.nomscientifique
+  ];
+  const res = await client.query(updatepredatorandotherfieldstext, updatepredatorandotherfieldstextvalues);
+  return res;
+
+}
   
 
   public async updateBird(bird: Especeoiseau): Promise<pg.QueryResult> {

@@ -6,6 +6,7 @@ import { catchError } from "rxjs/operators";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 import {UpdateKey} from "../../../common/tables/UpdateKey";
+import { UpdatePredator } from "../../../common/tables/UpdatePredator";
 
 @Injectable()
 export class CommunicationService {
@@ -64,6 +65,12 @@ export class CommunicationService {
       .pipe(catchError(this.handleError<number>("UpdateKey")));
   }
 
+  public updatePredator(request: UpdatePredator): Observable<number> {
+    return this.http
+      .put<number>(this.BASE_URL + "/birds/updatePredator", request)
+      .pipe(catchError(this.handleError<number>("updatePredator")));
+  }
+  
   private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
     return (error: Error): Observable<T> => {
       console.error("Error occurred:", error);

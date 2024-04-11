@@ -5,6 +5,7 @@ import * as pg from "pg";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 import {UpdateKey} from "../../../common/tables/UpdateKey";
+import {UpdatePredator} from "../../../common/tables/UpdatePredator";
 
 import { DatabaseService } from "../services/database.service";
 import Types from "../types";
@@ -112,8 +113,26 @@ export class DatabaseController {
       }
     );
 
-
-
+    router.put(
+      "/birds/updatePredator",
+      (req: Request, res: Response, _: NextFunction) => {
+        const request: UpdatePredator = {
+          oldpredator: req.body.oldpredator,
+          newpredator: req.body.newpredator,
+          especeToUpdate: req.body.especeToUpdate,
+        };
+    
+        this.databaseService
+          .updatePredator(request)
+          .then((result: pg.QueryResult) => {
+            res.json(result.rowCount);
+          })
+          .catch((e: Error) => {
+            console.error(e.stack);
+            res.json(-1);
+          });
+      }
+    );
     
 
     router.put(
