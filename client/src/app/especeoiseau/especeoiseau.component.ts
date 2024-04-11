@@ -130,10 +130,16 @@ export class EspeceOiseauComponent {
   
 
   public updateEspeceOiseau(i: number) {
+    this.especesOiseaux[i].editable = false;
     if (this.keymodified && this.predatormodified) {
       this.updateKeyAndOtherFields(i);
-    } else if(this.keymodified)
+      return;
+    } 
+    else if(this.keymodified){
       this.updateKey(i);
+      return;
+    }
+
     else {
       this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
         this.toggleEdit(i);

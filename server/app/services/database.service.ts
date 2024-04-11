@@ -102,7 +102,7 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
   if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
     throw new Error("Invalid bird creation values");
 
-  // Mettez à jour la clé primaire
+  // Mettez à jour la clé principale
   const updateKeyQueryText: string = `
     UPDATE ornithologue_bd.Especeoiseau
     SET nomscientifique = $1
@@ -115,44 +115,33 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
   const updateOtherFieldsQueryText: string = `
     UPDATE ornithologue_bd.Especeoiseau
     SET nomcommun = $1,
-        statutspeces = $2,
-        nomscientifiquecomsommer = $3
-    WHERE nomscientifique = $4;
+        statutspeces = $2
+    WHERE nomscientifique = $3;
   `;
   const updateOtherFieldsValues: any[] = [
     request.especeToUpdate.nomcommun,
     request.especeToUpdate.statutspeces,
-    request.especeToUpdate.nomscientifiquecomsommer,
     request.newKey
   ];
-  await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
-  const existsQueryText: string = `
-      SELECT EXISTS (SELECT 1 FROM ornithologue_bd.Especeoiseau WHERE nomscientifique = $1);
-    `;
-    const existsValues: any[] = [request.especeToUpdate.nomscientifiquecomsommer];
-    const existsResult = await client.query(existsQueryText, existsValues);
-    const exists = existsResult.rows[0].exists;
+  const res = await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
 
-    if (!exists) {
-      // Ajouter le nouveau prédateur avec des valeurs par défaut
-      const insertQueryText: string = `
-        INSERT INTO ornithologue_bd.Especeoiseau (nomscientifique, nomcommun, statutspeces, nomscientifiquecomsommer)
-        VALUES ($1, 'default1', 'default2', NULL);
-      `;
-      await client.query(insertQueryText, [request.especeToUpdate.nomscientifiquecomsommer]);
-    }
 
-    // Mettre à jour le prédateur
+  // Vérifiez si le nouveau nom du prédateur est différent de la nouvelle clé du nom d'espèce
+  if (request.newpredator !== request.newKey) {
+   
+   
     const updatePredatorQueryText: string = `
       UPDATE ornithologue_bd.Especeoiseau
       SET nomscientifiquecomsommer = $1
-      WHERE nomscientifiquecomsommer = $2;
+      WHERE nomscientifique = $2;
     `;
-    const updatePredatorValues: any[] = [request.especeToUpdate.nomscientifiquecomsommer, request.oldpredator];
-   const res =  await client.query(updatePredatorQueryText, updatePredatorValues);
-  
+    const updatePredatorValues: any[] = [request.newpredator, request.newKey];
+    return await client.query(updatePredatorQueryText, updatePredatorValues);
+  }else {
+    return  res;
+  }
 
-  return res; // Renvoie un objet avec le nombre de lignes mises à jour
+
 }
 
 
