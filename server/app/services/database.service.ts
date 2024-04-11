@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import * as pg from "pg";
 import "reflect-metadata";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
+import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 
 @injectable()
 export class DatabaseService {
@@ -56,6 +57,43 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
     client.release();
     return res;
   }
+
+
+  public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Promise<pg.QueryResult> {
+    const client = await this.pool.connect();
+
+    if (!request.especeToUpdate.nomscientifique || !request.especeToUpdate.nomcommun || !request.especeToUpdate.statutspeces)
+      throw new Error("Invalid bird creation values");
+
+        // Mettez à jour la clé primaire
+        const updateKeyQueryText: string = `
+            UPDATE ornithologue_bd.Especeoiseau
+            SET nomscientifique = $1
+            WHERE nomscientifique = $2;
+        `;
+        const updateKeyValues: any[] = [request.newKey, request.oldKey];
+        await client.query(updateKeyQueryText, updateKeyValues);
+
+        // Mettez à jour les autres champs
+        const updateOtherFieldsQueryText: string = `
+            UPDATE ornithologue_bd.Especeoiseau
+            SET nomcommun = $1,
+                statutspeces = $2,
+                nomscientifiquecomsommer = $3
+            WHERE nomscientifique = $4;
+        `;
+        const updateOtherFieldsValues: any[] = [
+          request.especeToUpdate.nomcommun,
+          request.especeToUpdate.statutspeces,
+          request.especeToUpdate.nomscientifiquecomsommer,
+          request.newKey
+        ];
+        const res = await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
+        return res; // Renvoie un objet avec le nombre de lignes mises à jour
+
+}
+
+  
 
   public async updateBird(bird: Especeoiseau): Promise<pg.QueryResult> {
     const client = await this.pool.connect();

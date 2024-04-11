@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 import { of, Observable, Subject } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
+import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 
 @Injectable()
 export class CommunicationService {
@@ -50,8 +51,11 @@ export class CommunicationService {
       .pipe(catchError(this.handleError<number>("deleteEspeceOiseau")));
   }
 
-
-  
+  public updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Observable<number> {
+    return this.http
+      .put<number>(this.BASE_URL + "/birds/updateKeyAndOtherFields", request)
+      .pipe(catchError(this.handleError<number>("updateKeyAndOtherFields")));
+  }
 
   private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
     return (error: Error): Observable<T> => {

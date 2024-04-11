@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { Especeoiseau, Statut  } from "../../../../common/tables/Especeoiseau";
+import {UpdateKeyAndOtherFieldsRequest} from "../../../../common/tables/Keyobject";
 import { CommunicationService } from "../communication.service";
 
 
@@ -23,6 +24,9 @@ export class EspeceOiseauComponent {
   public statut: Statut = Statut.Vulnerable; 
   public nomScientifiqueComsommer: string = '';
   public editable: boolean = false;
+  public keymodified: boolean= false;
+  public oldkey: string = '';
+
 
 
   public constructor(private communicationService: CommunicationService) {}
@@ -108,8 +112,9 @@ export class EspeceOiseauComponent {
 }
 
 
-
   public changeNomScientifique(event: any, i: number) {
+    this.keymodified = true;
+    this.oldkey = this.especesOiseaux[i].nomscientifique ;
     const editField = event.target.textContent;
     this.especesOiseaux[i].nomscientifique = editField;
   }
@@ -121,7 +126,30 @@ export class EspeceOiseauComponent {
   
 
   public updateEspeceOiseau(i: number) {
-    this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
+    if (this.keymodified) {
+      // Appel à une méthode spéciale pour mettre à jour la clé primaire
+      this.updateKeyAndOtherFields(i);
+    } else {
+      // Appel à la méthode normale pour mettre à jour les autres champs
+      this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
+        this.toggleEdit(i);
+        this.refresh();
+      });
+    }
+  }
+
+  private updateKeyAndOtherFields(i: number) {
+    const request : UpdateKeyAndOtherFieldsRequest = {
+      oldKey: this.oldkey,
+      newKey: this.especesOiseaux[i].nomscientifique,
+     especeToUpdate: this.especesOiseaux[i]
+    };
+
+    this.communicationService.updateKeyAndOtherFields( request).subscribe((res: any) => {
+      this.keymodified = false;
+      this.oldkey = '';
+  
+
       this.toggleEdit(i);
       this.refresh();
     });

@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import * as pg from "pg";
 
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
+import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 
 import { DatabaseService } from "../services/database.service";
 import Types from "../types";
@@ -65,6 +66,30 @@ export class DatabaseController {
       }
     );
 
+
+    router.put(
+      "/birds/updateKeyAndOtherFields",
+      (req: Request, res: Response, _: NextFunction) => {
+        const request: UpdateKeyAndOtherFieldsRequest = {
+          oldKey: req.body.oldKey,
+          newKey: req.body.newKey,
+          especeToUpdate: req.body.especeToUpdate,
+        };
+    
+        this.databaseService
+          .updateKeyAndOtherFields(request)
+          .then((result: pg.QueryResult) => {
+            res.json(result.rowCount);
+          })
+          .catch((e: Error) => {
+            console.error(e.stack);
+            res.json(-1);
+          });
+      }
+    );
+
+    
+
     router.put(
       "/birds/update",
       (req: Request, res: Response, _: NextFunction) => {
@@ -87,6 +112,8 @@ export class DatabaseController {
           });
       }
     );
+
+
     
     router.delete(
       "/birds/delete/:nomscientifique",
