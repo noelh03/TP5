@@ -17,10 +17,12 @@ export class EspeceOiseauComponent {
   public selectedNomComsommer: string = '';
   
   public listeStatuts: Statut[] = Object.values(Statut);
+  public selectedStatut: Statut = Statut.Vulnerable;
   public nomScientifique: string = '';
   public nomCommun: string = '';
   public statut: Statut = Statut.Vulnerable; 
   public nomScientifiqueComsommer: string = '';
+  public editable: boolean = false;
 
 
   public constructor(private communicationService: CommunicationService) {}
@@ -32,10 +34,12 @@ export class EspeceOiseauComponent {
 
   public getEspecesOiseaux(): void {
     this.communicationService.getEspecesOiseaux().subscribe((especesOiseaux: Especeoiseau[]) => {
-      this.especesOiseaux = especesOiseaux;
+      this.especesOiseaux = especesOiseaux.map((espece) => {
+        return { ...espece, editable: false }; 
+      });
     });
-    
   }
+  
 
   public getNomScientifiqueConsommer(): void {
     this.communicationService.getNomScientifiqueConsommer().subscribe((noms: string[]) => {
@@ -52,14 +56,22 @@ export class EspeceOiseauComponent {
     this.showAddFormFlag = false;
   }
   
-
+  toggleEdit(index: number) {
+    this.especesOiseaux.forEach((espece, i) => {
+      espece.editable = i === index;
+      this.editable = espece.editable
+    });
+  }
+  
+  
   public insertEspeceOiseau(): void {
     this.closeAddForm();
     const especeOiseau: Especeoiseau = {
       nomscientifique: this.nomScientifique,
       nomcommun: this.nomCommun,
       statutspeces: this.statut,
-      nomscientifiquecomsommer: this.nomScientifiqueComsommer || 'NULL', 
+      nomscientifiquecomsommer: this.nomScientifiqueComsommer, 
+      editable: false,
     };
   
     this.communicationService.insertEspeceOiseau(especeOiseau).subscribe((res: number) => {
@@ -91,14 +103,29 @@ export class EspeceOiseauComponent {
     this.especesOiseaux[i].nomcommun = editField;
   }
 
-  public changeStatut(event: any, i: number) {
+  public changeStatut(event: any, i: number, selectedStatut: Statut) {
+    this.especesOiseaux[i].statutspeces = selectedStatut;
+}
+
+
+
+  public changeNomScientifique(event: any, i: number) {
     const editField = event.target.textContent;
-    this.especesOiseaux[i].statutspeces = editField;
+    this.especesOiseaux[i].nomscientifique = editField;
   }
+
+  public changeNomScientifiqueComsommer(event: any, i: number) {
+    const editField = event.target.textContent;
+    this.especesOiseaux[i].nomscientifiquecomsommer = editField;
+  }
+  
 
   public updateEspeceOiseau(i: number) {
     this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
+      this.toggleEdit(i);
       this.refresh();
     });
   }
+
+  
 }

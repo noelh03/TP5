@@ -50,6 +50,7 @@ export class DatabaseController {
           nomcommun: req.body.nomcommun,
           statutspeces: req.body.statutspeces,
           nomscientifiquecomsommer: req.body.nomscientifiquecomsommer,
+          editable:false,
         };
     
         this.databaseService
@@ -72,6 +73,7 @@ export class DatabaseController {
           nomcommun: req.body.nomcommun,
           statutspeces: req.body.statutspeces,
           nomscientifiquecomsommer: req.body.nomscientifiquecomsommer,
+          editable:false,
         };
     
         this.databaseService

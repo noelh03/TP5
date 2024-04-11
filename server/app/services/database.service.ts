@@ -47,7 +47,7 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
       bird.nomscientifique,
       bird.nomcommun,
       bird.statutspeces,
-      bird.nomscientifiquecomsommer || 'NULL',
+      bird.nomscientifiquecomsommer,
     ];
     const queryText: string =
       "INSERT INTO ornithologue_bd.Especeoiseau VALUES($1, $2, $3, $4);";
@@ -66,7 +66,7 @@ public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
     const values: string[] = [
       bird.nomcommun,
       bird.statutspeces,
-      bird.nomscientifiquecomsommer || 'NULL',
+      bird.nomscientifiquecomsommer,
       bird.nomscientifique,
     ];
     const queryText: string = `
