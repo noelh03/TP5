@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { Especeoiseau } from "../../../../common/tables/Especeoiseau";
+import { Component } from "@angular/core";
+import { Especeoiseau, Statut  } from "../../../../common/tables/Especeoiseau";
 import { CommunicationService } from "../communication.service";
 
 
@@ -8,18 +8,20 @@ import { CommunicationService } from "../communication.service";
   templateUrl: "./especeoiseau.component.html",
   styleUrls: ["./especeoiseau.component.css"],
 })
-export class EspeceOiseauComponent {
-  @ViewChild("newNomScientifique") newNomScientifique: ElementRef;
-  @ViewChild("newNomCommun") newNomCommun: ElementRef;
-  @ViewChild("newStatut") newStatut: ElementRef;
-  @ViewChild("newNomScientifiqueComsommer") newNomScientifiqueComsommer: ElementRef;
-
-
-  selectedNomComsommer: string = '';
+export class EspeceOiseauComponent { 
 
   public listeNomsScientifiquesComsommer: string[] = [];
   public especesOiseaux: Especeoiseau[] = [];
   public duplicateError: boolean = false;
+  public showAddFormFlag: boolean = false;
+  public selectedNomComsommer: string = '';
+  
+  public listeStatuts: Statut[] = Object.values(Statut);
+  public nomScientifique: string = '';
+  public nomCommun: string = '';
+  public statut: Statut = Statut.Vulnerable; 
+  public nomScientifiqueComsommer: string = '';
+
 
   public constructor(private communicationService: CommunicationService) {}
 
@@ -38,41 +40,46 @@ export class EspeceOiseauComponent {
   public getNomScientifiqueConsommer(): void {
     this.communicationService.getNomScientifiqueConsommer().subscribe((noms: string[]) => {
       this.listeNomsScientifiquesComsommer = noms;
-      this.listeNomsScientifiquesComsommer.unshift("NULL"); 
     });
   }
   
-  updateNewNomScientifiqueComsommer(selectedValue: string): void {
-    this.newNomScientifiqueComsommer.nativeElement.innerText = selectedValue;
+
+  showAddForm(): void {
+    this.showAddFormFlag = true;
+  }
+
+  closeAddForm(): void {
+    this.showAddFormFlag = false;
   }
   
 
   public insertEspeceOiseau(): void {
+    this.closeAddForm();
     const especeOiseau: Especeoiseau = {
-      nomscientifique: this.newNomScientifique.nativeElement.innerText,
-      nomcommun: this.newNomCommun.nativeElement.innerText,
-      statutspeces: this.newStatut.nativeElement.innerText,
-      nomscientifiquecomsommer: this.newNomScientifiqueComsommer.nativeElement.innerText || 'NULL',
+      nomscientifique: this.nomScientifique,
+      nomcommun: this.nomCommun,
+      statutspeces: this.statut,
+      nomscientifiquecomsommer: this.nomScientifiqueComsommer || 'NULL', 
     };
   
     this.communicationService.insertEspeceOiseau(especeOiseau).subscribe((res: number) => {
       if (res > 0) {
         this.communicationService.filter("update");
+        this.refresh(); 
       }
-      this.refresh();
       this.duplicateError = res === -1;
     });
   }
   
-
   private refresh() {
     this.getEspecesOiseaux();
-    this.newNomScientifique.nativeElement.innerText = "";
-    this.newNomCommun.nativeElement.innerText = "";
-    this.newStatut.nativeElement.innerText = "";
-    this.newNomScientifiqueComsommer.nativeElement.innerText = "";
+    this.getNomScientifiqueConsommer(); 
+    this.nomScientifique = "";
+    this.nomCommun = "";
+    this.statut = Statut.Vulnerable;
+    this.nomScientifiqueComsommer = "";
   }
-
+  
   public deleteEspeceOiseau(nomScientifique: string) {
     this.communicationService.deleteEspeceOiseau(nomScientifique).subscribe((res: any) => {
       this.refresh();
