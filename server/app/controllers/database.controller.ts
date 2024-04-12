@@ -106,7 +106,7 @@ export class DatabaseController {
           })
           .catch((e: Error) => {
             console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
-            res.status(500).json({ error: "Erreur modification cle. (Fait reference a d'autres tables)", message: e.message });
+            res.status(500).json({ error: "Erreur modification cle", message: e.message });
           });
       }
   );

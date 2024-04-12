@@ -19,7 +19,7 @@ export class EspeceOiseauComponent {
   public selectedNomComsommer: string = '';
   public listeStatuts: Statut[] = Object.values(Statut);
   public selectedStatut: Statut = Statut.Vulnerable;
-  public selectedpredator: string = '';
+  public selectedpredator: string = 'null';
   public nomScientifique: string = '';
   public nomCommun: string = '';
   public statut: Statut = Statut.Vulnerable; 
@@ -73,6 +73,7 @@ export class EspeceOiseauComponent {
     });
     this.selectedStatut = this.especesOiseaux[index].statutspeces;
     this.etat_1 = this.especesOiseaux[index].nomscientifique;
+    this.selectedpredator = "null";
   }
 
   cancelEdit(index: number): void {
@@ -107,6 +108,7 @@ export class EspeceOiseauComponent {
     this.nomCommun = "";
     this.statut = Statut.Vulnerable;
     this.nomScientifiqueComsommer = "";
+    this.selectedpredator = "null";
   }
   
   public deleteEspeceOiseau(nomScientifique: string) {
@@ -130,6 +132,7 @@ export class EspeceOiseauComponent {
     this.oldkey = this.especesOiseaux[i].nomscientifique ;
     const editField = event.target.textContent;
     this.especesOiseaux[i].nomscientifique = editField;
+    this.selectedpredator = "null";
   }
 
   public changeNomScientifiqueComsommer(event: any, i: number, selectedpredator: string) {

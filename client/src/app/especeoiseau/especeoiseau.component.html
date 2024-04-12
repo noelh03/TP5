@@ -23,8 +23,8 @@
             </td>
             <td class="contentCell" *ngIf="espece.editable" >
               <select id="predator" [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
-                <option [value]="null">null</option>
-                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [value]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
+                <option [ngValue]="null">null</option>
+                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [ngValue]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
             </select>
            </td>
 

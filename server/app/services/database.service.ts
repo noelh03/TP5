@@ -196,6 +196,11 @@ public async updatePredator(request: UpdatePredator): Promise<pg.QueryResult> {
       throw new Error("Invalid bird creation values");
     }
 
+    if (request.oldpredator === null && request.newpredator === null) {
+      throw new Error("Le nouveau prédateur ne peut pas être null lorsque le nom scientifique consommé est déjà null."); 
+    }
+
+
     const updatepredatorandotherfieldstext: string = `
       UPDATE ornithologue_bd.Especeoiseau
       SET nomcommun = $1,
@@ -214,6 +219,8 @@ public async updatePredator(request: UpdatePredator): Promise<pg.QueryResult> {
   } catch (error) {
     console.error("Une erreur s'est produite lors de la mise à jour du prédateur :", error);
     throw error;
+  } finally {
+    client.release();
   }
 }
 
