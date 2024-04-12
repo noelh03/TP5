@@ -184,9 +184,9 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
 //Modification du predator
 public async updatePredator(request: UpdatePredator): Promise<pg.QueryResult> {
   const client = await this.pool.connect();
-
   try {
     if (request.newpredator === request.especeToUpdate.nomscientifique) {
+      client.release();
       throw new Error("Le nouveau prédateur ne peut pas être le même que la nouvelle clé du nom d'espèce (pas de cannibalisme).");
     }
 
@@ -215,7 +215,7 @@ public async updatePredator(request: UpdatePredator): Promise<pg.QueryResult> {
   }
 }
 
-//Update cham
+//Update oiseau (champ nom commun et/ou statut)
 public async updateBird(bird: Especeoiseau): Promise<pg.QueryResult> {
   const client = await this.pool.connect();
 
@@ -244,12 +244,14 @@ public async updateBird(bird: Especeoiseau): Promise<pg.QueryResult> {
   }
 }
 
-
+//supprimer tuple
 public async deleteBird(nomscientifique: string): Promise<pg.QueryResult> {
-    const client = await this.pool.connect();
+  const client = await this.pool.connect();
 
-    if (!nomscientifique)
+  try {
+    if (!nomscientifique) {
       throw new Error("Invalid bird delete values");
+    }
 
     const queryText: string = `
       DELETE FROM ornithologue_bd.Especeoiseau 
@@ -258,6 +260,10 @@ public async deleteBird(nomscientifique: string): Promise<pg.QueryResult> {
     const res = await client.query(queryText, [nomscientifique]);
     client.release();
     return res;
+  } catch (error) {
+    console.error("Une erreur s'est produite lors de la suppression de l'espèce :", error);
+    throw error;
+  }
 }
 
 }

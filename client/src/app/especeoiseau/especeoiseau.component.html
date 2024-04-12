@@ -23,9 +23,9 @@
             </td>
             <td class="contentCell" *ngIf="espece.editable" >
               <select [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
-                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [ngValue]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
+                <option [value]="null">null</option>
+                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [value]="predator.nomscientifique"  >{{ selectedPredator }}</option>
             </select>
-            
            </td>
 
               <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomscientifique }}</td>
@@ -37,10 +37,7 @@
                     <button *ngIf="espece.editable" type="button" class="submitbtn" (click)="updateEspeceOiseau(i)"><i class="fa fa-edit"></i></button>
                     <button type="button" class="deletebtn" (click)="deleteEspeceOiseau(espece.nomscientifique)"><i class="fa fa-trash-o"></i></button>
                   </td>
-            </tr>  
-
-
-            
+            </tr> 
     </tbody>
 
   </table>

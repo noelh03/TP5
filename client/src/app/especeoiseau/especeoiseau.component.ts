@@ -17,10 +17,9 @@ export class EspeceOiseauComponent {
   public duplicateError: boolean = false;
   public showAddFormFlag: boolean = false;
   public selectedNomComsommer: string = '';
-  
   public listeStatuts: Statut[] = Object.values(Statut);
   public selectedStatut: Statut = Statut.Vulnerable;
-  public selectedpredator: string = '';
+  public selectedpredator: string;
   public nomScientifique: string = '';
   public nomCommun: string = '';
   public statut: Statut = Statut.Vulnerable; 
@@ -68,6 +67,9 @@ export class EspeceOiseauComponent {
       espece.editable = i === index;
       this.editable = espece.editable;
     });
+    this.selectedStatut = this.especesOiseaux[index].statutspeces;
+    this.selectedpredator  = this.especesOiseaux[index].nomscientifiquecomsommer;
+
   }
   
   
@@ -133,14 +135,17 @@ export class EspeceOiseauComponent {
     //this.especesOiseaux[i].editable = false;
     if (this.keymodified && this.predatormodified) {
       this.updateKeyAndOtherFields(i);
+      this.especesOiseaux[i].editable = false;
       return;
     } 
     else if(this.keymodified){
       this.updateKey(i);
+      this.especesOiseaux[i].editable = false;
       return;
     }
     else if(this.predatormodified){
       this.updatePredator(i);
+      this.especesOiseaux[i].editable = false;
       return;
     }
     else {
@@ -197,12 +202,18 @@ export class EspeceOiseauComponent {
     };
 
     this.communicationService.updatePredator(request).subscribe((res: any) => {
+
       this.predatormodified = false;
       this.oldpredator = '';
     
       this.toggleEdit(i);
-      this.refresh();
-    });
+      this.refresh();},
+      (error: any) => {
+      console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
+      this.especesOiseaux[i].editable = true;
+      }
+    );
+    
   }
 
   

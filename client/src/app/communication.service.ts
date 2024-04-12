@@ -24,7 +24,7 @@ export class CommunicationService {
     this._listners.next(filterBy);
   }
 
-  //DONE
+
   public getEspecesOiseaux(): Observable<Especeoiseau[]> {
     return this.http
       .get<Especeoiseau[]>(this.BASE_URL + "/birds")
@@ -36,7 +36,6 @@ export class CommunicationService {
       .get<string[]>(this.BASE_URL + "/birds/distinct-nomscientifique")
       .pipe(catchError(this.errorToClient));
   }
-
 
   public insertEspeceOiseau(espece: Especeoiseau): Observable<number> {
     return this.http
@@ -91,6 +90,5 @@ export class CommunicationService {
     alert(errorMessage); 
     return throwError(errorMessage);
   }
-
  
 }
