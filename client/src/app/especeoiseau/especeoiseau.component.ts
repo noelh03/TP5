@@ -29,6 +29,7 @@ export class EspeceOiseauComponent {
   public oldkey: string = '';
   public predatormodified: boolean = false;
   public oldpredator: string = '';
+  public etat_1 : string = '';
 
 
 
@@ -67,15 +68,16 @@ export class EspeceOiseauComponent {
       espece.editable = i === index;
       this.editable = espece.editable;
       if( espece.editable)
-      this.selectedpredator  = espece.nomscientifique;
+      this.selectedpredator  = espece.nomscientifiquecomsommer;
 
     });
     this.selectedStatut = this.especesOiseaux[index].statutspeces;
-   
+    this.etat_1 = this.especesOiseaux[index].nomscientifique;
   }
 
   cancelEdit(index: number): void {
     this.especesOiseaux[index].editable =false;
+    this.especesOiseaux[index].nomscientifique = this.etat_1;
   }
   
   
@@ -157,8 +159,12 @@ export class EspeceOiseauComponent {
     else {
       this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
         this.toggleEdit(i);
-        this.refresh();
-      });
+        this.refresh();},
+        (error: any) => {
+        console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
+        this.especesOiseaux[i].editable = true;
+        }
+      );
     }
   }
 
@@ -179,8 +185,12 @@ export class EspeceOiseauComponent {
   
 
       this.toggleEdit(i);
-      this.refresh();
-    });
+      this.refresh();},
+      (error: any) => {
+      console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
+      this.especesOiseaux[i].editable = true;
+      }
+    );
   }
 
   private updateKey(i: number) {
@@ -196,8 +206,12 @@ export class EspeceOiseauComponent {
       this.oldkey = '';
     
       this.toggleEdit(i);
-      this.refresh();
-    });
+      this.refresh();},
+      (error: any) => {
+      console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
+      this.especesOiseaux[i].editable = true;
+      }
+    );
   }
 
   private updatePredator(i: number) {
@@ -219,7 +233,6 @@ export class EspeceOiseauComponent {
       this.especesOiseaux[i].editable = true;
       }
     );
-    
   }
 
   

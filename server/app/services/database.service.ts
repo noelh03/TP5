@@ -138,7 +138,19 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
       throw new Error("Le nouveau prédateur ne peut pas être le même que la nouvelle clé du nom d'espèce (pas de cannibalisme).");
     }
 
-    // Maj clé principale
+    // Vérifier si la nouvelle clé est différente de toutes les clés existantes
+    const keyExistsQueryText: string = `
+      SELECT EXISTS (SELECT 1 FROM ornithologue_bd.Especeoiseau WHERE nomscientifique = $1);
+    `;
+    const keyExistsValues: any[] = [request.newKey];
+    const keyExistsResult = await client.query(keyExistsQueryText, keyExistsValues);
+    const keyExists = keyExistsResult.rows[0].exists;
+
+    if (keyExists) {
+      throw new Error("Une espèce avec cette nouvelle clé existe déjà.");
+    }
+
+    // Mettre à jour la clé principale
     const updateKeyQueryText: string = `
       UPDATE ornithologue_bd.Especeoiseau
       SET nomscientifique = $1
@@ -147,7 +159,7 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
     const updateKeyValues: any[] = [request.newKey, request.oldKey];
     await client.query(updateKeyQueryText, updateKeyValues);
 
-    // Maj autres champs
+    // Mettre à jour les autres champs
     const updateOtherFieldsQueryText: string = `
       UPDATE ornithologue_bd.Especeoiseau
       SET nomcommun = $1,
@@ -158,21 +170,11 @@ public async updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): P
     const updateOtherFieldsValues: any[] = [
       request.especeToUpdate.nomcommun,
       request.especeToUpdate.statutspeces,
-      request.especeToUpdate.nomscientifiquecomsommer,
+      request.newpredator,
       request.newKey
     ];
     const res = await client.query(updateOtherFieldsQueryText, updateOtherFieldsValues);
-
-    // Maj prédateur
-    const updatePredatorQueryText: string = `
-      UPDATE ornithologue_bd.Especeoiseau
-      SET nomscientifiquecomsommer = $1
-      WHERE nomscientifiquecomsommer = $2;
-    `;
-    const updatePredatorValues: any[] = [request.newpredator, request.oldpredator];
-    await client.query(updatePredatorQueryText, updatePredatorValues);
-
-    return res; 
+    return res;
   } catch (error) {
     console.error("Une erreur s'est produite lors de la mise à jour :", error);
     throw error;

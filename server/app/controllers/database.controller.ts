@@ -85,7 +85,7 @@ export class DatabaseController {
           })
           .catch((e: Error) => {
             console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
-            res.status(500).json({ error: "Une erreur s'est produite lors de la modification.", message: e.message });
+            res.status(500).json({ error: "Une erreur s'est produite lors de la modification (Une espèce avec cette nouvelle clé existe déja). Reesayer", message: e.message });
           });
           
       }
