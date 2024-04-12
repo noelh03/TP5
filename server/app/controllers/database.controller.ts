@@ -22,7 +22,7 @@ export class DatabaseController {
     // ======= Especeoiseau ROUTES =======
     // ex http://localhost:3000/database/hotel?hotelNb=3&name=LeGrandHotel&city=laval
   // ======= BIRDS ROUTES =======
-  
+
   router.get("/birds", (req: Request, res: Response, _: NextFunction) => {
     this.databaseService.getAllBirds()
       .then((result: pg.QueryResult) => {
@@ -37,17 +37,15 @@ export class DatabaseController {
   router.get("/birds/distinct-nomscientifique", (req: Request, res: Response, _: NextFunction) => {
     this.databaseService.getDistinctNomScientifiqueComsommer()
       .then((result: pg.QueryResult) => {
-        res.json(result.rows); // Renvoie les noms scientifiques comsommer distincts sous forme de JSON
+        res.json(result.rows);
       })
       .catch((e: Error) => {
         console.error(e.stack);
-        res.status(500).send("Une erreur s'est produite lors de la récupération des noms scientifiques comsommer distincts.");
+        res.status(500).send("Une erreur s'est produite lors de la récupération des noms des predateurs.");
       });
   });
 
-    //done
-    router.post(
-      "/birds/insert",
+  router.post("/birds/insert",
       (req: Request, res: Response, _: NextFunction) => {
         const bird: Especeoiseau = {
           nomscientifique: req.body.nomscientifique,
@@ -64,15 +62,13 @@ export class DatabaseController {
           })
           .catch((e: Error) => {
             console.error(e.stack);
-            res.status(500).json({ error: "Une espèce avec cette clé existe déjà." });
+            res.status(500).json({ error: "Une erreur s'est produite lors de l'insertion.", message: e.message });
           });
           
       }
-    );
+  );
 
-
-    router.put(
-      "/birds/updateKeyAndOtherFields",
+  router.put("/birds/updateKeyAndOtherFields",
       (req: Request, res: Response, _: NextFunction) => {
         const request: UpdateKeyAndOtherFieldsRequest = {
           oldKey: req.body.oldKey,
@@ -88,14 +84,14 @@ export class DatabaseController {
             res.json(result.rowCount);
           })
           .catch((e: Error) => {
-            console.error(e.stack);
-            res.json(-1);
+            console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
+            res.status(500).json({ error: "Une erreur s'est produite lors de la modification.", message: e.message });
           });
+          
       }
-    );
+  );
 
-    router.put(
-      "/birds/updateKey",
+  router.put("/birds/updateKey",
       (req: Request, res: Response, _: NextFunction) => {
         const request: UpdateKey = {
           oldKey: req.body.oldKey,
@@ -109,14 +105,13 @@ export class DatabaseController {
             res.json(result.rowCount);
           })
           .catch((e: Error) => {
-            console.error(e.stack);
-            res.json(-1);
+            console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
+            res.status(500).json({ error: "Erreur modification cle.", message: e.message });
           });
       }
-    );
-
-    router.put(
-      "/birds/updatePredator",
+  );
+  
+  router.put("/birds/updatePredator",
       (req: Request, res: Response, _: NextFunction) => {
         const request: UpdatePredator = {
           oldpredator: req.body.oldpredator,
@@ -130,15 +125,13 @@ export class DatabaseController {
             res.json(result.rowCount);
           })
           .catch((e: Error) => {
-            console.error(e.stack);
-            res.json(-1);
+            console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
+            res.status(500).json({ error: "X-Pas de cannibalisme-X Error lors du choix du predator", message: e.message });
           });
       }
-    );
+  );
     
-
-    router.put(
-      "/birds/update",
+  router.put("/birds/update",
       (req: Request, res: Response, _: NextFunction) => {
         const bird: Especeoiseau = {
           nomscientifique: req.body.nomscientifique,
@@ -154,16 +147,13 @@ export class DatabaseController {
             res.json(result.rowCount);
           })
           .catch((e: Error) => {
-            console.error(e.stack);
-            res.json(-1);
+            console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
+            res.status(500).json({ error: "Erreur lors de la modification du champ Nom commun", message: e.message });
           });
       }
-    );
-
-
-    
-    router.delete(
-      "/birds/delete/:nomscientifique",
+  );
+ 
+  router.delete("/birds/delete/:nomscientifique",
       (req: Request, res: Response, _: NextFunction) => {
         const nomscientifique: string = req.params.nomscientifique;
     
@@ -173,14 +163,12 @@ export class DatabaseController {
             res.json(result.rowCount);
           })
           .catch((e: Error) => {
-            console.error(e.stack);
-            res.json(-1);
+            console.error("Une erreur s'est produite lors de la suppression du tuple :", e.message);
+            res.status(500).json({ error: "Erreur lors de la suppression du tuple", message: e.message });
           });
       }
-    );
+  );
     
-    
-
-    return router;
+  return router;
   }
 }

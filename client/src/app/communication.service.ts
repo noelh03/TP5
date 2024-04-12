@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 // tslint:disable-next-line:ordered-imports
-import { of, Observable, Subject } from "rxjs";
+import {  Observable, Subject } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
@@ -24,17 +24,19 @@ export class CommunicationService {
     this._listners.next(filterBy);
   }
 
+  //DONE
   public getEspecesOiseaux(): Observable<Especeoiseau[]> {
     return this.http
       .get<Especeoiseau[]>(this.BASE_URL + "/birds")
-      .pipe(catchError(this.handleError<Especeoiseau[]>("getEspecesOiseaux")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public getNomScientifiqueConsommer(): Observable<string[]> {
     return this.http
       .get<string[]>(this.BASE_URL + "/birds/distinct-nomscientifique")
-      .pipe(catchError(this.handleError<string[]>("getNomScientifiqueConsommer")));
+      .pipe(catchError(this.errorToClient));
   }
+
 
   public insertEspeceOiseau(espece: Especeoiseau): Observable<number> {
     return this.http
@@ -45,39 +47,39 @@ export class CommunicationService {
   public updateEspeceOiseau(espece: Especeoiseau): Observable<number> {
     return this.http
       .put<number>(this.BASE_URL + "/birds/update", espece)
-      .pipe(catchError(this.handleError<number>("updateEspeceOiseau")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public deleteEspeceOiseau(nomscientifique: string): Observable<number> {
     return this.http
       .delete<number>(this.BASE_URL + `/birds/delete/${nomscientifique}`)
-      .pipe(catchError(this.handleError<number>("deleteEspeceOiseau")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public updateKeyAndOtherFields(request: UpdateKeyAndOtherFieldsRequest): Observable<number> {
     return this.http
       .put<number>(this.BASE_URL + "/birds/updateKeyAndOtherFields", request)
-      .pipe(catchError(this.handleError<number>("updateKeyAndOtherFields")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public updateKey(request: UpdateKey): Observable<number> {
     return this.http
       .put<number>(this.BASE_URL + "/birds/updateKey", request)
-      .pipe(catchError(this.handleError<number>("UpdateKey")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public updatePredator(request: UpdatePredator): Observable<number> {
     return this.http
       .put<number>(this.BASE_URL + "/birds/updatePredator", request)
-      .pipe(catchError(this.handleError<number>("updatePredator")));
+      .pipe(catchError(this.errorToClient));
   }
   
-  private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-    return (error: Error): Observable<T> => {
-      console.error("Error occurred:", error);
-      return of(result as T);
-    };
-  }
+  // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
+  //   return (error: Error): Observable<T> => {
+  //     console.error("Error occurred:", error);
+  //     return of(result as T);
+  //   };
+  // }
   
   private errorToClient(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
@@ -86,7 +88,7 @@ export class CommunicationService {
       errorMessage = error.error.error;
     }
 
-    alert(errorMessage); // Afficher l'erreur dans une alerte
+    alert(errorMessage); 
     return throwError(errorMessage);
   }
 
