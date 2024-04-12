@@ -48,7 +48,6 @@ export class EspeceOiseauComponent {
     });
   }
   
-
   public getNomScientifiqueConsommer(): void {
     this.communicationService.getNomScientifiqueConsommer().subscribe((noms: string[]) => {
       this.listeNomsScientifiquesComsommer = noms;
@@ -84,7 +83,7 @@ export class EspeceOiseauComponent {
   
     this.communicationService.insertEspeceOiseau(especeOiseau).subscribe((res: number) => {
       if (res > 0) {
-        this.communicationService.filter("update");
+        //this.communicationService.filter("update");
         this.refresh(); 
       }
       this.duplicateError = res === -1;

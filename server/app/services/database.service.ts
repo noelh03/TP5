@@ -31,6 +31,7 @@ export class DatabaseService {
   return res;
 }
 
+//A VOIR
 public async getDistinctNomScientifiqueComsommer(): Promise<pg.QueryResult> {
   const client = await this.pool.connect();
 
@@ -42,24 +43,39 @@ public async getDistinctNomScientifiqueComsommer(): Promise<pg.QueryResult> {
 
 
 public async createBird(bird: Especeoiseau): Promise<pg.QueryResult> {
-    const client = await this.pool.connect();
+  const client = await this.pool.connect();
 
-    if (!bird.nomscientifique || !bird.nomcommun || !bird.statutspeces)
-      throw new Error("Invalid bird creation values");
+  // Vérifier si la clé primaire existe déjà
+  const keyExistsQueryText: string = `
+    SELECT EXISTS (SELECT 1 FROM ornithologue_bd.Especeoiseau WHERE nomscientifique = $1);
+  `;
+  const keyExistsValues: any[] = [bird.nomscientifique];
+  const keyExistsResult = await client.query(keyExistsQueryText, keyExistsValues);
+  const keyExists = keyExistsResult.rows[0].exists;
 
-    const values: string[] = [
-      bird.nomscientifique,
-      bird.nomcommun,
-      bird.statutspeces,
-      bird.nomscientifiquecomsommer,
-    ];
-    const queryText: string =
-      "INSERT INTO ornithologue_bd.Especeoiseau VALUES($1, $2, $3, $4);";
-
-    const res = await client.query(queryText, values);
+  if (keyExists) {
     client.release();
-    return res;
+    throw new Error("Une espèce avec cette clé existe déjà.");
   }
+
+  if (!bird.nomscientifique || !bird.nomcommun || !bird.statutspeces) {
+    client.release();
+    throw new Error("Valeurs de création d'espèce non valides.");
+  }
+
+  const values: string[] = [
+    bird.nomscientifique,
+    bird.nomcommun,
+    bird.statutspeces,
+    bird.nomscientifiquecomsommer,
+  ];
+  const queryText: string =
+    "INSERT INTO ornithologue_bd.Especeoiseau VALUES($1, $2, $3, $4);";
+
+  const res = await client.query(queryText, values);
+  client.release();
+  return res;
+}
 
 
   public async updateKey(request: UpdateKey): Promise<pg.QueryResult> {

@@ -22,10 +22,11 @@ export class DatabaseController {
     // ======= Especeoiseau ROUTES =======
     // ex http://localhost:3000/database/hotel?hotelNb=3&name=LeGrandHotel&city=laval
   // ======= BIRDS ROUTES =======
+  
   router.get("/birds", (req: Request, res: Response, _: NextFunction) => {
     this.databaseService.getAllBirds()
       .then((result: pg.QueryResult) => {
-        res.json(result.rows); // Renvoie les espèces d'oiseaux récupérées sous forme de JSON
+        res.json(result.rows); 
       })
       .catch((e: Error) => {
         console.error(e.stack);
@@ -44,7 +45,7 @@ export class DatabaseController {
       });
   });
 
-
+    //done
     router.post(
       "/birds/insert",
       (req: Request, res: Response, _: NextFunction) => {
@@ -63,8 +64,9 @@ export class DatabaseController {
           })
           .catch((e: Error) => {
             console.error(e.stack);
-            res.json(-1);
+            res.status(500).json({ error: "Une espèce avec cette clé existe déjà." });
           });
+          
       }
     );
 

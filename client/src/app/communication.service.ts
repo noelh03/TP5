@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 // tslint:disable-next-line:ordered-imports
 import { of, Observable, Subject } from "rxjs";
@@ -7,6 +7,7 @@ import { Especeoiseau } from "../../../common/tables/Especeoiseau";
 import {UpdateKeyAndOtherFieldsRequest} from "../../../common/tables/Keyobject";
 import {UpdateKey} from "../../../common/tables/UpdateKey";
 import { UpdatePredator } from "../../../common/tables/UpdatePredator";
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class CommunicationService {
@@ -38,7 +39,7 @@ export class CommunicationService {
   public insertEspeceOiseau(espece: Especeoiseau): Observable<number> {
     return this.http
       .post<number>(this.BASE_URL + "/birds/insert", espece)
-      .pipe(catchError(this.handleError<number>("insertEspeceOiseau")));
+      .pipe(catchError(this.errorToClient));
   }
 
   public updateEspeceOiseau(espece: Especeoiseau): Observable<number> {
@@ -77,4 +78,17 @@ export class CommunicationService {
       return of(result as T);
     };
   }
+  
+  private errorToClient(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An error occurred';
+
+    if (error.error && error.error.error) {
+      errorMessage = error.error.error;
+    }
+
+    alert(errorMessage); // Afficher l'erreur dans une alerte
+    return throwError(errorMessage);
+  }
+
+ 
 }
