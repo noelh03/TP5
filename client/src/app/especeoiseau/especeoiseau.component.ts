@@ -19,7 +19,7 @@ export class EspeceOiseauComponent {
   public selectedNomComsommer: string = '';
   public listeStatuts: Statut[] = Object.values(Statut);
   public selectedStatut: Statut = Statut.Vulnerable;
-  public selectedpredator: string;
+  public selectedpredator: string = '';
   public nomScientifique: string = '';
   public nomCommun: string = '';
   public statut: Statut = Statut.Vulnerable; 
