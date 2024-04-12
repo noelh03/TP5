@@ -66,10 +66,16 @@ export class EspeceOiseauComponent {
     this.especesOiseaux.forEach((espece, i) => {
       espece.editable = i === index;
       this.editable = espece.editable;
+      if( espece.editable)
+      this.selectedpredator  = espece.nomscientifique;
+
     });
     this.selectedStatut = this.especesOiseaux[index].statutspeces;
-    this.selectedpredator  = this.especesOiseaux[index].nomscientifiquecomsommer;
+   
+  }
 
+  cancelEdit(index: number): void {
+    this.especesOiseaux[index].editable =false;
   }
   
   

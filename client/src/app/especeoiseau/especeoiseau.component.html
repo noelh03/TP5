@@ -17,14 +17,14 @@
               <td class="contentCell" *ngIf="espece.editable" contenteditable="true"(blur)="changeNomScientifique($event, i)">{{ espece.nomscientifique }}</td>
               <td class="contentCell" *ngIf="espece.editable" contenteditable="true" (blur)="changeNomCommun($event, i)">{{ espece.nomcommun }}</td>
               <td class="contentCell" *ngIf="espece.editable">
-                <select [(ngModel)]="selectedStatut" (change)="changeStatut($event, i, selectedStatut)">
+                <select id="statut" [(ngModel)]="selectedStatut" (change)="changeStatut($event, i, selectedStatut)">
                     <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut }}</option>
                 </select>
             </td>
             <td class="contentCell" *ngIf="espece.editable" >
-              <select [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
+              <select id="predator" [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
                 <option [value]="null">null</option>
-                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [value]="predator.nomscientifique"  >{{ selectedPredator }}</option>
+                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [value]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
             </select>
            </td>
 
@@ -35,6 +35,7 @@
                   <td class="actionCell">
                     <button *ngIf="!espece.editable" type="button" class="submitbtn" (click)="toggleEdit(i)">Modifier</button>
                     <button *ngIf="espece.editable" type="button" class="submitbtn" (click)="updateEspeceOiseau(i)"><i class="fa fa-edit"></i></button>
+                    <button *ngIf="espece.editable"(click)="cancelEdit(i)">Annuler</button>
                     <button type="button" class="deletebtn" (click)="deleteEspeceOiseau(espece.nomscientifique)"><i class="fa fa-trash-o"></i></button>
                   </td>
             </tr> 
