@@ -9,6 +9,6 @@ export interface Especeoiseau {
     nomscientifique: string;
     nomcommun: string;
     statutspeces: Statut;
-    nomscientifiquecomsommer: string;
+    nomscientifiquecomsommer: string | null;
     editable: boolean;
 }

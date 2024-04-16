@@ -1,5 +1,5 @@
-<div id="especeoiseau">
-  <h1>Espece Oiseaux</h1>
+<div  *ngIf="!showAddFormFlag" id="especesoiseaux">
+  <h1>Espèces Oiseaux</h1>
 
   <div class="divider"></div>
 
@@ -8,76 +8,74 @@
       <th class="contentCell">Nom Scientifique</th>
       <th class="contentCell">Nom Commun</th>
       <th class="contentCell">Statut</th>
-      <th class="contentCell">Nom Scientifique Comsommer</th>
+      <th class="contentCell">Prédateur</th>
       <th class="actionCell">Action</th>
     </thead>
 
     <tbody>
-            <tr *ngFor="let espece of especesOiseaux; let i = index">
-              <td class="contentCell" *ngIf="espece.editable" contenteditable="true"(blur)="changeNomScientifique($event, i)">{{ espece.nomscientifique }}</td>
-              <td class="contentCell" *ngIf="espece.editable" contenteditable="true" (blur)="changeNomCommun($event, i)">{{ espece.nomcommun }}</td>
-              <td class="contentCell" *ngIf="espece.editable">
-                <select id="statut" [(ngModel)]="selectedStatut" (change)="changeStatut($event, i, selectedStatut)">
-                    <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut }}</option>
-                </select>
-            </td>
-            <td class="contentCell" *ngIf="espece.editable" >
-              <select id="predator" [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
-                <option [ngValue]="null">null</option>
-                <option *ngFor="let predator of listeNomsScientifiquesComsommer" [ngValue]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
-            </select>
-           </td>
+      <tr *ngFor="let espece of especesOiseaux; let i = index">
+        <td class="contentCell">{{ espece.nomscientifique }}</td>
+        
+        <td class="contentCell" *ngIf="espece.editable" contenteditable="true" (blur)="changeNomCommun($event, i)">{{ espece.nomcommun }}</td>
+        <td class="contentCell" *ngIf="espece.editable">
+          <select id="statut" [(ngModel)]="selectedStatut" (change)="changeStatut($event, i, selectedStatut)">
+              <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut }}</option>
+          </select>
+        </td>
+        <td class="contentCell" *ngIf="espece.editable" >
+          <select id="predator" [(ngModel)]="selectedPredator" (change)="changeNomScientifiqueComsommer($event, i, selectedPredator)" >
+          <option [ngValue]="null">Espèce sans prédateur</option>
+          <option *ngFor="let predator of listeNomsScientifiquesComsommer" [ngValue]="predator.nomscientifique"  >{{ predator.nomscientifique }}</option>
+        </select>
+        </td>
 
-              <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomscientifique }}</td>
-              <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomcommun }}</td>
-              <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.statutspeces }}</td>
-              <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomscientifiquecomsommer }}</td>
-                  <td class="actionCell">
-                    <button *ngIf="!espece.editable" type="button" class="submitbtn" (click)="toggleEdit(i)">Modifier</button>
-                    <button *ngIf="espece.editable" type="button" class="submitbtn" (click)="updateEspeceOiseau(i)"><i class="fa fa-edit"></i></button>
-                    <button *ngIf="espece.editable"(click)="cancelEdit(i)">Annuler</button>
-                    <button type="button" class="deletebtn" (click)="deleteEspeceOiseau(espece.nomscientifique)"><i class="fa fa-trash-o"></i></button>
-                  </td>
-            </tr> 
+        <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomcommun }}</td>
+        <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.statutspeces }}</td>
+        <td class="contentCell" *ngIf="!espece.editable" contenteditable="false" >{{ espece.nomscientifiquecomsommer }}</td>
+
+        <td class="actionCell">
+          <button *ngIf="!espece.editable" type="button" class="submitbtn" (click)="toggleEdit(i)">Modifier</button>
+          <button *ngIf="espece.editable" type="button" class="submitbtn" (click)="updateEspeceOiseau(i)"><i class="fa fa-edit"></i></button>
+          <button *ngIf="espece.editable"(click)="cancelEdit(i)">Annuler</button>
+          <button *ngIf="!espece.editable" type="button" class="deletebtn" (click)="deleteEspeceOiseau(espece.nomscientifique)"><i class="fa fa-trash-o"></i></button>
+        </td>
+      </tr> 
     </tbody>
-
   </table>
+  <button type="button" class="btn" *ngIf="!editing" (click)="showAddForm()">Ajouter une Espèce</button>
+</div>
 
-  <button type="button" class="btn" (click)="showAddForm()">Ajouter  Espece</button>
 
-
-
-  <!-- Formulaire popup -->
-<div *ngIf="showAddFormFlag" class="popup">
-  <div class="popup-content">
-    <span class="close" (click)="closeAddForm()">&times;</span>
-    <h2>Ajouter une nouvelle espèce d'oiseau</h2>
+<!-- Formulaire popup -->
+<div *ngIf="showAddFormFlag" id="ajout">
+  <h1>Ajouter une nouvelle espèce d'oiseau</h1>
+  <div id="popup">
     <form>
       <div>
         <label for="newNomScientifique">Nom Scientifique:</label>
-        <input type="text" id="newNomScientifique" [(ngModel)]="nomScientifique">
+        <input name="newNomScientifique" type="text" id="newNomScientifique" [(ngModel)]="nomScientifique" required>
       </div>
       <div>
         <label for="newNomCommun">Nom Commun:</label>
-        <input type="text" id="newNomCommun" [(ngModel)]="nomCommun">
+        <input name="newNomCommun" type="text" id="newNomCommun" [(ngModel)]="nomCommun" required>
       </div>
       <div>
         <label for="newStatut">Statut:</label>
-        <select id="newStatut" [(ngModel)]="statut">
-          <option *ngFor="let statut of listeStatuts" [value]="statut">{{ statut }}</option>
+        <select name="newStatut" id="newStatut" [(ngModel)]="statut" required>
+          <option *ngFor="let statut of listeStatuts" [ngValue]="statut">{{ statut }}</option>
         </select>
       </div>
       <div>
         <label for="newNomScientifiqueComsommer">Nom Scientifique Comsommer:</label>
-        <select id="newNomScientifiqueComsommer" [(ngModel)]="nomScientifiqueComsommer">
-          <option [ngValue]="null">null</option>
+        <select name="newNomScientifiqueComsommer" id="newNomScientifiqueComsommer" [(ngModel)]="nomScientifiqueComsommer" required>
+          <option [ngValue]="null">Espèce sans prédateur</option>
           <option *ngFor="let nom of listeNomsScientifiquesComsommer" [ngValue]="nom.nomscientifique">{{ nom.nomscientifique }}</option>
         </select>
       </div>
+    </form>  
+    <div id="flex-container">
       <button type="submit" (click)="insertEspeceOiseau()">Ajouter</button>
-    </form>
+      <button (click)="closeAddForm()">Annuler</button>
+    </div>
   </div>
-</div>
-
-
 </div>

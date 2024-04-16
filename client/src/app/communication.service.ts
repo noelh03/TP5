@@ -73,13 +73,6 @@ export class CommunicationService {
       .pipe(catchError(this.errorToClient));
   }
   
-  // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-  //   return (error: Error): Observable<T> => {
-  //     console.error("Error occurred:", error);
-  //     return of(result as T);
-  //   };
-  // }
-  
   private errorToClient(error: HttpErrorResponse): Observable<never> {
     let errorMessage = 'An error occurred';
 

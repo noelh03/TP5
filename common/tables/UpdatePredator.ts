@@ -1,8 +1,8 @@
 import {Especeoiseau} from "../tables/Especeoiseau"
 
 export interface UpdatePredator {
-    oldpredator: string;
-    newpredator: string;
+    oldpredator: string | null;
+    newpredator: string | null;
     especeToUpdate: Especeoiseau;
   }
   

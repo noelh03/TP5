@@ -54,7 +54,8 @@ export class DatabaseController {
           nomscientifiquecomsommer: req.body.nomscientifiquecomsommer,
           editable:false,
         };
-    
+        console.log('controller');
+        console.log(req.body.nomscientifiquecomsommer);
         this.databaseService
           .createBird(bird)
           .then((result: pg.QueryResult) => {
@@ -126,7 +127,8 @@ export class DatabaseController {
           })
           .catch((e: Error) => {
             console.error("Une erreur s'est produite lors de la modification de la table :", e.message);
-            res.status(500).json({ error: "X-Pas de cannibalisme-X Error lors du choix du predator", message: e.message });
+            if (request.newpredator === request.especeToUpdate.nomscientifique) res.status(500).json({ error: "X-Pas de cannibalisme-X Erreur lors du choix du prédateur", message: e.message });
+            else res.status(500).json({ error: "Erreur lors de la modification de la table : Nom Commun", message: e.message });
           });
       }
   );

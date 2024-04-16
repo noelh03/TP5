@@ -19,19 +19,18 @@ export class EspeceOiseauComponent {
   public selectedNomComsommer: string = '';
   public listeStatuts: Statut[] = Object.values(Statut);
   public selectedStatut: Statut = Statut.Vulnerable;
-  public selectedpredator: string = 'null';
-  public nomScientifique: string = '';
-  public nomCommun: string = '';
+  public selectedpredator: string | null = '';
+  public nomScientifique: string = 'Espèce';
+  public nomCommun: string = 'Nom Espèce';
   public statut: Statut = Statut.Vulnerable; 
-  public nomScientifiqueComsommer: string = '';
+  public nomScientifiqueComsommer: string | null = null;
   public editable: boolean = false;
+  public editing: boolean = false;
   public keymodified: boolean= false;
   public oldkey: string = '';
   public predatormodified: boolean = false;
-  public oldpredator: string = '';
+  public oldpredator: string | null = '';
   public etat_1 : string = '';
-
-
 
   public constructor(private communicationService: CommunicationService) {}
 
@@ -54,16 +53,20 @@ export class EspeceOiseauComponent {
     });
   }
   
-
-  showAddForm(): void {
+  public showAddForm(): void {
+    this.nomScientifique = 'Espèce ' + this.generateRandomWord();
+    this.nomCommun = 'Nom Espèce';
+    this.selectedStatut = Statut.Vulnerable;
+    this.nomScientifiqueComsommer = null;
     this.showAddFormFlag = true;
   }
 
-  closeAddForm(): void {
+  public closeAddForm(): void {
     this.showAddFormFlag = false;
   }
   
-  toggleEdit(index: number) {
+  public toggleEdit(index: number): void {
+    this.editing = true;
     this.especesOiseaux.forEach((espece, i) => {
       espece.editable = i === index;
       this.editable = espece.editable;
@@ -73,10 +76,11 @@ export class EspeceOiseauComponent {
     });
     this.selectedStatut = this.especesOiseaux[index].statutspeces;
     this.etat_1 = this.especesOiseaux[index].nomscientifique;
-    this.selectedpredator = "null";
+    this.selectedpredator = '';
   }
 
-  cancelEdit(index: number): void {
+  public cancelEdit(index: number): void {
+    this.editing = false;
     this.especesOiseaux[index].editable =false;
     this.especesOiseaux[index].nomscientifique = this.etat_1;
   }
@@ -94,56 +98,47 @@ export class EspeceOiseauComponent {
   
     this.communicationService.insertEspeceOiseau(especeOiseau).subscribe((res: number) => {
       if (res > 0) {
-        //this.communicationService.filter("update");
         this.refresh(); 
       }
       this.duplicateError = res === -1;
     });
   }
   
-  private refresh() {
+  private refresh(): void {
     this.getEspecesOiseaux();
     this.getNomScientifiqueConsommer(); 
-    this.nomScientifique = "";
-    this.nomCommun = "";
+    this.nomScientifique = 'Espèce';
+    this.nomCommun = 'Nom Espèce';
     this.statut = Statut.Vulnerable;
-    this.nomScientifiqueComsommer = "";
-    this.selectedpredator = "null";
+    this.selectedStatut = Statut.Vulnerable;
+    this.nomScientifiqueComsommer = 'Espèce sans prédateur';
+    this.selectedpredator = 'Espèce sans prédateur';
   }
   
-  public deleteEspeceOiseau(nomScientifique: string) {
+  public deleteEspeceOiseau(nomScientifique: string): void {
     this.communicationService.deleteEspeceOiseau(nomScientifique).subscribe((res: any) => {
       this.refresh();
     });
   }
 
-  public changeNomCommun(event: any, i: number) {
+  public changeNomCommun(event: any, i: number): void {
     const editField = event.target.textContent;
     this.especesOiseaux[i].nomcommun = editField;
   }
 
-  public changeStatut(event: any, i: number, selectedStatut: Statut) {
+  public changeStatut(event: any, i: number, selectedStatut: Statut): void {
     this.especesOiseaux[i].statutspeces = selectedStatut;
-}
-
-
-  public changeNomScientifique(event: any, i: number) {
-    this.keymodified = true;
-    this.oldkey = this.especesOiseaux[i].nomscientifique ;
-    const editField = event.target.textContent;
-    this.especesOiseaux[i].nomscientifique = editField;
-    this.selectedpredator = "null";
   }
 
-  public changeNomScientifiqueComsommer(event: any, i: number, selectedpredator: string) {
+
+  public changeNomScientifiqueComsommer(event: any, i: number, selectedpredator: string): void {
     this.predatormodified = true;
     this.oldpredator = this.especesOiseaux[i].nomscientifiquecomsommer;
     this.especesOiseaux[i].nomscientifiquecomsommer = selectedpredator;
   }
   
-
-  public updateEspeceOiseau(i: number) {
-    //this.especesOiseaux[i].editable = false;
+  public updateEspeceOiseau(i: number): void {
+    this.editing = false;
     if (this.keymodified && this.predatormodified) {
       this.updateKeyAndOtherFields(i);
       this.especesOiseaux[i].editable = false;
@@ -162,16 +157,18 @@ export class EspeceOiseauComponent {
     else {
       this.communicationService.updateEspeceOiseau(this.especesOiseaux[i]).subscribe((res: any) => {
         this.toggleEdit(i);
-        this.refresh();},
+        this.refresh();
+        this.editing = false;},
         (error: any) => {
         console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
         this.especesOiseaux[i].editable = true;
+        this.editing = true;
         }
       );
     }
   }
 
-  private updateKeyAndOtherFields(i: number) {
+  private updateKeyAndOtherFields(i: number): void {
     const request : UpdateKeyAndOtherFieldsRequest = {
       oldKey: this.oldkey,
       newKey: this.especesOiseaux[i].nomscientifique,
@@ -188,15 +185,17 @@ export class EspeceOiseauComponent {
   
 
       this.toggleEdit(i);
-      this.refresh();},
+      this.refresh();
+      this.editing = false;},
       (error: any) => {
       console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
       this.especesOiseaux[i].editable = true;
+      this.editing = true;
       }
     );
   }
 
-  private updateKey(i: number) {
+  private updateKey(i: number): void {
     const request : UpdateKey = {
       oldKey: this.oldkey,
       newKey: this.especesOiseaux[i].nomscientifique,
@@ -209,15 +208,17 @@ export class EspeceOiseauComponent {
       this.oldkey = '';
     
       this.toggleEdit(i);
-      this.refresh();},
+      this.refresh();
+      this.editing = false;},
       (error: any) => {
       console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
       this.especesOiseaux[i].editable = true;
+      this.editing = true;
       }
     );
   }
 
-  private updatePredator(i: number) {
+  private updatePredator(i: number): void {
     const request : UpdatePredator = {
       oldpredator: this.oldpredator,
       newpredator:this.especesOiseaux[i].nomscientifiquecomsommer,
@@ -225,18 +226,28 @@ export class EspeceOiseauComponent {
     };
 
     this.communicationService.updatePredator(request).subscribe((res: any) => {
-
       this.predatormodified = false;
       this.oldpredator = '';
-    
+      
       this.toggleEdit(i);
-      this.refresh();},
+      this.refresh();
+      this.editing = false;},
       (error: any) => {
       console.error("Une erreur s'est produite lors de la mise à jour de l'espèce d'oiseau :", error);
       this.especesOiseaux[i].editable = true;
+      this.editing = true;
       }
     );
   }
 
-  
+  private generateRandomWord(): string {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    const length = 5;
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+    return result;
+  }
 }

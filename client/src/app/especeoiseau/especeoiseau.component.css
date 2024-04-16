@@ -1,4 +1,11 @@
-#especeoiseau {
+#especesoiseaux {
+    background-color: #e2e2e2;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    padding: 3%;
+}
+
+#ajout {
     background-color: #e2e2e2;
     font-family: 'Roboto', sans-serif;
     text-align: center;
@@ -78,3 +85,55 @@
     background-color: #6E9EEB;
 }
 
+#flex-container {
+    margin-left: 40%;
+    margin-right: 40%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#popup {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    width: 500px;
+    margin: auto;
+  }
+  
+  #popup h2 {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  
+  #popup form {
+    margin-bottom: 20px;
+  }
+  
+  #popup label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  #popup input[type="text"],
+  #popup select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  #popup button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    color: white;
+    background-color: #6E9EEB;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  #popup button:last-child {
+    margin-right: 0;
+  }

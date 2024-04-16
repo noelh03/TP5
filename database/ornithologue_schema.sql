@@ -53,6 +53,9 @@ CREATE TABLE Especeoiseau (
     statutspeces VARCHAR(255),
     nomscientifiquecomsommer VARCHAR(255), -- nom scientifique du prédateur de l'espèce courante
     FOREIGN KEY (nomscientifiquecomsommer) REFERENCES Especeoiseau(nomscientifique)
+    MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE SET NULL
 );
 
 CREATE TABLE Observation (
@@ -65,6 +68,9 @@ CREATE TABLE Observation (
     FOREIGN KEY (idrapport) REFERENCES Rapport(idrapport),
     FOREIGN KEY (idobservateur) REFERENCES Observateur(idobservateur),
     FOREIGN KEY (nomscientifique) REFERENCES Especeoiseau(nomscientifique)
+    MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE
 );
 
 CREATE TABLE Zonegeographique (
@@ -79,6 +85,9 @@ CREATE TABLE Resider (
     nomzone VARCHAR(255),
     nbindividus INT NOT NULL,
     PRIMARY KEY (nomscientifique, nomzone),
-    FOREIGN KEY (nomscientifique) REFERENCES Especeoiseau(nomscientifique),
+    FOREIGN KEY (nomscientifique) REFERENCES Especeoiseau(nomscientifique)
+    MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE,
     FOREIGN KEY (nomzone) REFERENCES Zonegeographique(nomzone)
 );
